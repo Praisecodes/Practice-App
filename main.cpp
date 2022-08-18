@@ -41,7 +41,7 @@ int main() {
 							SignUp(Signupapi_url);
 							break;
 						case 'N':
-							exit;
+							exit(1);
 							break;
 						default:
 							std::cout << optionErr;
@@ -67,7 +67,7 @@ int main() {
 							Login(Loginapi_url);
 							break;
 						case 'N':
-							exit;
+							exit(1);
 							break;
 						default:
 							std::cout << optionErr;
@@ -89,7 +89,7 @@ int main() {
 bool LoginCall(std::string username, std::string password, std::string endpoint) {
 	CURL* curl;
 	CURLcode response;
-	std::string* result;
+	std::string result;
 	std::string details = "{\"username\": \"" + username + "\", \"password\": \"" + password + "\"}";
 	json json_details = json::parse(details);
 
@@ -130,6 +130,13 @@ void Login(std::string API_endpoint) {
 	std::getline(std::cin, username);
 	std::cout << "Welcome " << username << ", Please Enter Your Password: ";
 	std::getline(std::cin, password);
+
+	if(LoginCall(username, password, API_endpoint)){
+		std::cout << "Hello " << username << ", You've Successfully Logged In!!\n";
+	}
+	else {
+		std::cout << "An error occured\nCheck Your Internet Connection Or Details You Entered\n";
+	}
 }
 
 void SignUp(std::string API_endpoint) {
