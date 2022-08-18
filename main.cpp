@@ -12,6 +12,9 @@ using json = nlohmann::json;
 void Login(std::string API_endpoint);
 void SignUp(std::string API_endpoint);
 
+// CURL callback function
+static size_t WriteCallback(void* contents, size_t size, size_t nmemb, void* userp);
+
 int main() {
 	std::string optionErr = "That is not an option.\nPlease select Y or N";
 	std::string Loginapi_url = "https://practiceapii.herokuapp.com/login.php";
@@ -49,6 +52,27 @@ int main() {
 		case 'N':
 			std::cout << "Do you want to signup for Practice App?[Y/N]: ";
 			std::cin >> userchoice;
+			switch (userchoice) {
+				case 'Y':
+					SignUp(Signupapi_url);
+					break;
+				case 'N':
+					std::cout << "Do you have an account and wish to login?[Y/N]: ";
+					std::cin >> userchoice;
+					switch (userchoice) {
+						case 'Y':
+							Login(Loginapi_url);
+							break;
+						case 'N':
+							exit;
+							break;
+						default:
+							std::cout << optionErr;
+					}
+					break;
+				default:
+					std::cout << optionErr;
+			}
 			break;
 		default:
 			std::cout << optionErr;
