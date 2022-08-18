@@ -4,11 +4,13 @@
 #include "curl/curl.h"
 #include <map>
 #include <vector>
+#include <Windows.h>
+#include <string>
 
 using json = nlohmann::json;
 
-void Login(std::string username, std::string password, std::string API_endpoint);
-void SignUp(std::string username, std::string email, std::string password, std::string API_endpoint);
+void Login(std::string API_endpoint);
+void SignUp(std::string API_endpoint);
 
 int main() {
 	std::string optionErr = "That is not an option.\nPlease select Y or N";
@@ -21,7 +23,7 @@ int main() {
 			std::cin >> userchoice;
 			switch (userchoice) {
 				case 'Y':
-
+					Login("https://practiceapii.herokuapp.com/login.php");
 					break;
 				case 'N':
 					exit;
@@ -37,6 +39,8 @@ int main() {
 			break;
 		default:
 			std::cout << optionErr;
+			Sleep(2000);
+			system("cls");
 			main();
 	}
 	return 0;
