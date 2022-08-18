@@ -10,7 +10,7 @@
 using json = nlohmann::json;
 
 //Functions For Calling API
-bool LoginCall(std::string username, std::string password, std::string endpoint);
+std::string LoginCall(std::string username, std::string password, std::string endpoint);
 
 void Login(std::string API_endpoint);
 void SignUp(std::string API_endpoint);
@@ -31,6 +31,7 @@ int main() {
 			std::cin >> userchoice;
 			switch (userchoice) {
 				case 'Y':
+					std::cin.ignore();
 					Login(Loginapi_url);
 					break;
 				case 'N':
@@ -64,6 +65,7 @@ int main() {
 					std::cin >> userchoice;
 					switch (userchoice) {
 						case 'Y':
+							std::cin.ignore();
 							Login(Loginapi_url);
 							break;
 						case 'N':
@@ -86,7 +88,7 @@ int main() {
 	return 0;
 }
 
-bool LoginCall(std::string username, std::string password, std::string endpoint) {
+std::string LoginCall(std::string username, std::string password, std::string endpoint) {
 	CURL* curl;
 	CURLcode response;
 	std::string result;
@@ -108,17 +110,12 @@ bool LoginCall(std::string username, std::string password, std::string endpoint)
 		response = curl_easy_perform(curl);
 		curl_easy_cleanup(curl);
 		if (response != CURLE_OK) {
-			return false;
+			return "Check Your Internet";
 		}
 		else {
 			json json_result = json::parse(result);
 			std::vector<std::string> resultArr = json_result;
-			if (resultArr[0] == "Success") {
-				return true;
-			}
-			else {
-				return false;
-			}
+			return resultArr[0];
 		}
 	}
 }
@@ -126,16 +123,18 @@ bool LoginCall(std::string username, std::string password, std::string endpoint)
 void Login(std::string API_endpoint) {
 	std::string username, password;
 	std::cout << "Enter Your Username: ";
-	std::cin.ignore();
 	std::getline(std::cin, username);
 	std::cout << "Welcome " << username << ", Please Enter Your Password: ";
 	std::getline(std::cin, password);
+	std::cout << username << std::endl;
 
-	if(LoginCall(username, password, API_endpoint)){
+	if(LoginCall(username, password, API_endpoint) == "Success") {
 		std::cout << "Hello " << username << ", You've Successfully Logged In!!\n";
 	}
 	else {
-		std::cout << "An error occured\nCheck Your Internet Connection Or Details You Entered\n";
+		std::cout << LoginCall(username, password, API_endpoint) << std::endl;
+		Sleep(1000);
+		Login(API_endpoint);
 	}
 }
 
