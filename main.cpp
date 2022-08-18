@@ -120,6 +120,7 @@ std::string APICall(std::string details, std::string endpoint) {
 			return resultArr[0];
 		}
 	}
+	return "";
 }
 
 void Login(std::string API_endpoint) {
@@ -157,7 +158,7 @@ void SignUp(std::string API_endpoint) {
 	if (APICall(details, API_endpoint) == "Success") {
 		Sleep(1000);
 		system("cls");
-		std::cout << "You've Successfully Signed Up For Practice App\nPlease Login!!";
+		std::cout << "You've Successfully Signed Up For Practice App\nPlease Login!!\n";
 		Login("https://practiceapii.herokuapp.com/login.php");
 	}
 	else {
