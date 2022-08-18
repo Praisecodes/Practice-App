@@ -10,7 +10,7 @@
 using json = nlohmann::json;
 
 //Functions For Calling API
-std::string LoginCall(std::string username, std::string password, std::string endpoint);
+std::string APICall(std::string details, std::string endpoint);
 
 void Login(std::string API_endpoint);
 void SignUp(std::string API_endpoint);
@@ -39,6 +39,7 @@ int main() {
 					std::cin >> userchoice;
 					switch (userchoice) {
 						case 'Y':
+							std::cin.ignore();
 							SignUp(Signupapi_url);
 							break;
 						case 'N':
@@ -58,6 +59,7 @@ int main() {
 			std::cin >> userchoice;
 			switch (userchoice) {
 				case 'Y':
+					std::cin.ignore();
 					SignUp(Signupapi_url);
 					break;
 				case 'N':
@@ -88,11 +90,11 @@ int main() {
 	return 0;
 }
 
-std::string LoginCall(std::string username, std::string password, std::string endpoint) {
+std::string APICall(std::string details, std::string endpoint) {
 	CURL* curl;
 	CURLcode response;
 	std::string result;
-	std::string details = "{\"username\": \"" + username + "\", \"password\": \"" + password + "\"}";
+	// std::string details = "{\"username\": \"" + username + "\", \"password\": \"" + password + "\"}";
 	json json_details = json::parse(details);
 
 	curl = curl_easy_init();
@@ -126,20 +128,43 @@ void Login(std::string API_endpoint) {
 	std::getline(std::cin, username);
 	std::cout << "Welcome " << username << ", Please Enter Your Password: ";
 	std::getline(std::cin, password);
-	std::cout << username << std::endl;
 
-	if(LoginCall(username, password, API_endpoint) == "Success") {
+	std::string details = "{\"username\": \"" + username + "\", \"password\": \"" + password + "\"}";
+
+	if(APICall(details, API_endpoint) == "Success") {
 		std::cout << "Hello " << username << ", You've Successfully Logged In!!\n";
 	}
 	else {
-		std::cout << LoginCall(username, password, API_endpoint) << std::endl;
+		std::cout << APICall(details, API_endpoint) << std::endl;
 		Sleep(1000);
 		Login(API_endpoint);
 	}
 }
 
 void SignUp(std::string API_endpoint) {
-	std::string fullname, username, password;
+	std::string fullname, username, password, confirmPassword;
+
+	std::cout << "Enter Your Fullname: ";
+	std::getline(std::cin, fullname);
+	std::cout << "Choose A Username: ";
+	std::getline(std::cin, username);
+	std::cout << "Choose A Password: ";
+	std::getline(std::cin, password);
+	std::cout << "Enter The Password Again: ";
+	std::getline(std::cin, confirmPassword);
+
+	std::string details = "{\"fullname\": \"" + fullname + "\", \"username\": \"" + username + "\", \"password\": \"" + password + "\", \"confirm_password\": \"" + confirmPassword + "\"}";
+	if (APICall(details, API_endpoint) == "Success") {
+		Sleep(1000);
+		system("cls");
+		std::cout << "You've Successfully Signed Up For Practice App\nPlease Login!!";
+		Login("https://practiceapii.herokuapp.com/login.php");
+	}
+	else {
+		std::cout << "An error occured while signing you up!!\n";
+		Sleep(1000);
+		exit(1);
+	}
 }
 
 static size_t WriteCallback(void* contents, size_t size, size_t nmemeb, void* userp) {
